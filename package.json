@@ -1,0 +1,19 @@
+{
+  "name": "express-web-server-template",
+  "version": "1.0.0",
+  "description": "A template for a basic expressJS web server",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JakeBisson8/express-web-server-template.git"
+  },
+  "author": "Jake Bisson",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/JakeBisson8/express-web-server-template/issues"
+  },
+  "homepage": "https://github.com/JakeBisson8/express-web-server-template#readme"
+}
