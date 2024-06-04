@@ -41,6 +41,12 @@ app.use(
 
 app.use(httpRedirect);
 
+// For Angular applications / SPAs
+app.use(express.static(path.join(__dirname, "app/")));
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "app/index.html"));
+});
+
 const httpServer = http.createServer(app);
 httpServer.listen(HTTP_PORT, () => {
   console.log(`HTTP server started on port ${HTTP_PORT}`);
