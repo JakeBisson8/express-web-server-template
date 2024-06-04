@@ -26,6 +26,11 @@ const app = express();
 
 app.use(
   helmet({
+    contentSecurityPolicy: {
+      directives: {
+        "script-src-attr": ["'self'", "'unsafe-inline'"],
+      },
+    },
     strictTransportSecurity: parseInt(HTTPS)
       ? {
           maxAge: parseInt(HSTS_MAX_AGE),
