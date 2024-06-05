@@ -8,6 +8,7 @@ const path = require("path");
 const httpRedirect = require("./middleware/httpRedirect");
 
 const {
+  ANGULAR,
   HTTP_PORT,
   HTTPS_PORT,
   HTTPS,
@@ -28,7 +29,7 @@ app.use(
   helmet({
     contentSecurityPolicy: {
       directives: {
-        "script-src-attr": ["'self'", "'unsafe-inline'"],
+        ...helmet.contentSecurityPolicy.getDefaultDirectives(),
       },
     },
     strictTransportSecurity: parseInt(HTTPS)
@@ -44,13 +45,12 @@ app.use(
   })
 );
 
-app.use(httpRedirect);
-
-// For Angular applications / SPAs
-app.use(express.static(path.join(__dirname, "app/")));
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "app/index.html"));
-});
+if (parseInt(ANGULAR)) {
+  app.use(express.static(path.join(__dirname, "app/")));
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "app/index.html"));
+  });
+}
 
 const httpServer = http.createServer(app);
 httpServer.listen(HTTP_PORT, () => {
@@ -58,6 +58,8 @@ httpServer.listen(HTTP_PORT, () => {
 });
 
 if (parseInt(HTTPS)) {
+  app.use(httpRedirect);
+
   const options = {
     cert: fs.readFileSync(path.join(__dirname, "ssl/", SSL_CERT)),
     key: fs.readFileSync(path.join(__dirname, "ssl/", SSL_KEY)),
