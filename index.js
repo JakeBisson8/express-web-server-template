@@ -8,7 +8,6 @@ const path = require("path");
 const httpRedirect = require("./middleware/httpRedirect");
 
 const {
-  ANGULAR,
   HTTP_PORT,
   HTTPS_PORT,
   HTTPS,
@@ -45,12 +44,10 @@ app.use(
   })
 );
 
-if (parseInt(ANGULAR)) {
-  app.use(express.static(path.join(__dirname, "app/")));
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "app/index.html"));
-  });
-}
+app.use(express.static(path.join(__dirname, "app/")));
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "app/index.html"));
+});
 
 const httpServer = http.createServer(app);
 httpServer.listen(HTTP_PORT, () => {
