@@ -20,6 +20,7 @@ const {
   SSL_MAX_VERSION,
   SSL_CIPHERS,
   ECDH_CURVES,
+  DH_PARAM,
 } = process.env;
 
 const app = express();
@@ -44,6 +45,10 @@ app.use(
   })
 );
 
+if (parseInt(HTTPS)) {
+  app.use(httpRedirect);
+}
+
 app.use(express.static(path.join(__dirname, "app/")));
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "app/index.html"));
@@ -55,8 +60,6 @@ httpServer.listen(HTTP_PORT, () => {
 });
 
 if (parseInt(HTTPS)) {
-  app.use(httpRedirect);
-
   const options = {
     cert: fs.readFileSync(path.join(__dirname, "ssl/", SSL_CERT)),
     key: fs.readFileSync(path.join(__dirname, "ssl/", SSL_KEY)),
@@ -64,6 +67,7 @@ if (parseInt(HTTPS)) {
     maxVersion: SSL_MAX_VERSION,
     ciphers: SSL_CIPHERS,
     ecdhCurves: ECDH_CURVES,
+    dhparam: fs.readFileSync(path.join(__dirname, "ssl", DH_PARAM)),
   };
   const httpsServer = https.createServer(options, app);
   httpsServer.listen(HTTPS_PORT, () => {
