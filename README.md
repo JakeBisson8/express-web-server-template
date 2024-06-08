@@ -36,12 +36,13 @@ npm install
 
 5. Make a copy of `.env.example` called `.env`. You may choose to customize the environment variables to your liking or you can leave them as is. See [Environment Variables](#env) for more info.
 6. Create an `index.html` under the `app/` directory to simulate an app.
-7. Run the following command and navigate to [http://localhost](http://localhost).
 
 ```html
 <!-- app/index.html -->
 <h1>Hello World!</h1>
 ```
+
+7. Run the following command and navigate to [http://localhost](http://localhost).
 
 ```bash
 npm run start
@@ -74,6 +75,7 @@ npm run start
    - For more info about CSP read the [mdn docs](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP)
 
 ```ts
+// index.js
 app.use(
   helmet({
     contentSecurityPolicy: {
@@ -90,7 +92,7 @@ app.use(
 
 ## Setting up HTTPS 🔒 <a name="https"></a>
 
-All you need for HTTPS is a private key, certificate. Don't have one yet? You can try it out by using a self-signed certificate. Pssst... If you're allowing ciphers that use DH params then you will need that too 😉.
+All you need for HTTPS is a private key and certificate. Don't have those yet? You can use a self-signed certificate for now, but I recommend getting a valid certificate from a valid certificate authority. Pssst... If you're allowing ciphers that use DH params then you will need that too 😉.
 
 0. To create a self-signed certificate, [Install OpenSSL](https://tecadmin.net/install-openssl-on-windows/) then open a shell to the `ssl/` directory and run the following commands. For DH Params, the command is here too.
 
@@ -143,11 +145,13 @@ npm run install-service
 
 5. 😀 Woohoo! the service has installed. This project also supports commands for starting, stopping and uninstalling the service. You can check them out in the [Scripts](#scripts) section.
 
+**Important Note:** If you uninstall the service without using the `uninstall-service` command, you need to delete the `daemon/` folder within the project. I have found that if I don't then running `npm run intall-service` will not actually install the service again until I remove the `daemon/` folder.
+
 ## SSL/TLS 🔑 <a name="ssl"></a>
 
 The TLS/SSL configuration that is being used is [Mozilla's modern compatibility configuration](https://wiki.mozilla.org/Security/Server_Side_TLS#Modern_compatibility). This configuration does not require DH Params as the cipher suite that is used leverages ECDH curves instead.
 
-I would also like to specify that HSTS is configured for this web server. For those who don't know, HSTS is responsible for informing the browser it should be using HTTPS instead of HTTP. The browser will then re-route all HTTP traffic to HTTPS for you instead of hitting the server on HTTP and the server making the re-direct. For more info see [mdn docs Strict-Transport-Security](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security). In case you missed the important note, using a self-signed certificate may cause HSTS to not work properly as the browser wants to see a valid certificate before it re-directs all requests to HTTPS.
+I would also like to specify that HSTS is configured for this web server and controlled by the `HSTS_MAX_AGE`, `HSTS_INCLUDE_SUBDOMAINS` and `HSTS_PRELOAD` env variables. For those who don't know, HSTS is responsible for informing the browser it should be using HTTPS instead of HTTP. The browser will then re-route all HTTP traffic to HTTPS for you instead of hitting the server on HTTP and the server making the re-direct. For more info see [mdn docs Strict-Transport-Security](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security). In case you missed the important note, using a self-signed certificate may cause HSTS to not work properly as the browser wants to see a valid certificate before it re-directs all requests to HTTPS.
 
 ## Environment Variables 🌎 <a name="env"></a>
 
