@@ -90,9 +90,9 @@ app.use(
 
 ## Setting up HTTPS 🔒 <a name="https"></a>
 
-All you need for HTTPS is a private key and a certificate. Don't have one yet? You can try it out by using a self-signed certificate.
+All you need for HTTPS is a private key, certificate. Don't have one yet? You can try it out by using a self-signed certificate. Pssst... If you're allowing ciphers that use DH params then you will need that too 😉.
 
-0. To create a self-signed certificate, [Install OpenSSL](https://tecadmin.net/install-openssl-on-windows/) then open a shell to the `ssl/` directory and run the following commands.
+0. To create a self-signed certificate, [Install OpenSSL](https://tecadmin.net/install-openssl-on-windows/) then open a shell to the `ssl/` directory and run the following commands. For DH Params, the command is here too.
 
 ```bash
 # Generate private key
@@ -103,17 +103,20 @@ openssl req -new -key key.key -out cert.csr
 
 # Generate certificate
 openssl x509 -req -days 365 -in cert.csr -signkey key.key -out cert.crt
+
+# Generate DH Params
+openssl dhparam -out dhparam.pem 2048
 ```
 
 1. Open `.env` and change the `HTTPS` environment variable from `0` to `1`.
-2. If you named the private key `key.key` and the certificate `cert.crt` you can skip this step. Otherwise, open `.env` and update the `SSL_CERT` and `SSL_KEY` environment variables to the names of your key and certificate respectively.
+2. If you named the private key `key.key`, certificate `cert.crt` and DH params `dhparam.pem` you can skip this step. Otherwise, open `.env` and update the `SSL_CERT`, `SSL_KEY` and `DH_PARAM` environment variables to the names of your key, certificate and params respectively.
 3. Run the web server and test HTTPS [https://localhost](https://localhost).
 
 ```bash
 npm run start
 ```
 
-4. If you get an error from chome saying it is not safe - DON'T PANIC 🤪 This is simply due to the fact that you are using a self-signed certificate. If you're using a certificate from a trusted authority then 100% investigate.
+**Important Note:** If you get an error from chome saying it is not safe - DON'T PANIC 😱 This is simply due to the fact that you are using a self-signed certificate. If you're using a certificate from a trusted authority then 100% investigate. If you're using self-signed cert you will also notice that HSTS may not be working. This is because the browser requires to see a valid certificate before it decides to re-route requests to HTTPS.
 
 Curious about the default SSL/TLS configuration? see [SSL/TLS](#ssl)
 
@@ -142,9 +145,9 @@ npm run install-service
 
 ## SSL/TLS 🔑 <a name="ssl"></a>
 
-The TLS/SSL configuration that is being used is [Mozilla's modern compatibility configuration](https://wiki.mozilla.org/Security/Server_Side_TLS#Modern_compatibility).
+The TLS/SSL configuration that is being used is [Mozilla's modern compatibility configuration](https://wiki.mozilla.org/Security/Server_Side_TLS#Modern_compatibility). This configuration does not require DH Params as the cipher suite that is used leverages ECDH curves instead.
 
-I would also like to specify that HSTS is configured for this web server. For those who don't know, HSTS is responsible for informing the browser it should be using HTTPS instead of HTTP. For more info see [mdn docs Strict-Transport-Security](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security).
+I would also like to specify that HSTS is configured for this web server. For those who don't know, HSTS is responsible for informing the browser it should be using HTTPS instead of HTTP. The browser will then re-route all HTTP traffic to HTTPS for you instead of hitting the server on HTTP and the server making the re-direct. For more info see [mdn docs Strict-Transport-Security](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security). In case you missed the important note, using a self-signed certificate may cause HSTS to not work properly as the browser wants to see a valid certificate before it re-directs all requests to HTTPS.
 
 ## Environment Variables 🌎 <a name="env"></a>
 
