@@ -8,6 +8,10 @@ const svc = new Service({
   name: SERVICE_NAME,
   description: SERVICE_DESCRIPTION,
   script: path.join(__dirname, "index.js").replace("\\", "\\\\"),
+  env: {
+    name: "NODE_ENV",
+    value: "production",
+  },
 });
 
 svc.on("install", () => {
