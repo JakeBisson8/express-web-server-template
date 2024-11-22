@@ -50,7 +50,7 @@ if (parseInt(HTTPS)) {
 }
 
 app.use(express.static(path.join(__dirname, "app/")));
-app.get("*", (req, res) => {
+app.get("*all", (req, res) => {
   res.sendFile(path.join(__dirname, "app/index.html"));
 });
 
